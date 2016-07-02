@@ -11,7 +11,7 @@ var socket = new net.Socket();
 var client = socket.connect({ port: CONFIG.PORT, host: URL }, function() {
 
   request += 'GET / HTTP/1.1\n';
-  request += 'HOST:' + URL + '\n';
+  request += 'HOST: ' + URL + '\n';
   request += 'Connection: Keep-Alive\n\n';
 
   client.write(request);

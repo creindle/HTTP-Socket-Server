@@ -2,11 +2,20 @@ var net = require('net');
 
 var CONFIG = require('./config');
 
+var dataInput = "";
+
 var server = net.createServer(function (socket) {
   socket.end('goodbye\n');
 
   socket.on('data', function(data) {
-    console.log("Data" + data);
+    dataInput = data.toString();
+    console.log(dataInput);
+    if(dataInput.includes('blue')){
+      console.log("blue");
+    }
+    if(dataInput.includes('HOST')){
+      console.log("This string includes HOST");
+    }
   });
 
   socket.on('readable', function(data) {
