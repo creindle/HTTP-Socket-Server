@@ -29,13 +29,18 @@ var indexHTML = fs.readFile('./public/index.html', function(err, data) {
 });
 
 var server = net.createServer(function (socket) {
-  socket.end('goodbye\n');
+  //socket.end('goodbye\n');
 
   socket.on('data', function(data) {
     dataInput = data.toString();
     console.log(dataInput);
 
-    if(dataInput.includes('GET')){
+    var splitData = dataInput.split('\n');
+    console.log(splitData);
+
+    console.log(splitData[0]);
+
+    if(splitData[0].includes('GET')) {
       var removeGet = dataInput.indexOf('/');
       console.log(removeGet);
       var methodLength = dataInput.indexOf('\n');
@@ -43,34 +48,37 @@ var server = net.createServer(function (socket) {
 
       console.log(method);
       response += method + "\n";
-    }
 
-    if(dataInput.includes('blue')){
-      console.log("blue");
-    }
-    if(dataInput.includes('Host')){
-      var serverLength = dataInput.indexOf(':');
-      console.log(serverLength);
-      //var server = dataInput.slice(server, );
-      console.log("This string includes Host");
-    }
+      for (var i = 0; i < splitData.length; i++){
+        if(splitData[i].includes('Host')){
+          console.log("*This string includes Host");
+        }
+        if(splitData[i].includes('Date')){
+          console.log('*Date: ' + HTMLtime.toUTCString());
+          response += "*Date: " + HTMLtime.toUTCString() + "\n";
+        }
+        if(splitData[i].includes('Connection: keep-alive')){
+          console.log("*Connection: keep-alive");
+          response += "*Connection: keep-alive\n";
+        }
+      }
 
-    if(dataInput.includes('Date')){
-      console.log('Date: ' + HTMLtime.toUTCString());
-      response += "Date: " + HTMLtime.toUTCString();
-    }
-    if(dataInput.includes('Connection: keep-alive')){
-      console.log("Connection: keep-alive");
-      response += "Connection: keep-alive\n";
-    }
-  });
+      if(splitData[0].includes('helium.html')){
+        console.log("*" + heliumHTMLString);
+        response += "\n" + heliumHTMLString;
+      }
 
-  // socket.on('readable', function(data) {
-  //   console.log("There is data" + data);
-  // });
+      else if(splitData[0].includes('hydrogen.html')){
+        console.log("*" + hydrogenHTMLString);
+        response += "\n" + hydrogenHTMLString;
+      }
 
-  process.stdin.on('data', function(data) {
-    console.log("Socket is able to write" + response);
+      else if(splitData[0].includes('index.html')){
+        console.log("*" + indexHTMLString);
+        response += "\n" + indexHTMLString;
+      }
+
+    }
     socket.write(response);
   });
 });
