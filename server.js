@@ -6,8 +6,6 @@ var dataInput = "";
 
 var fs = require('fs');
 
-var response = "";
-
 var heliumHTMLString;
 var hydrogenHTMLString;
 var indexHTMLString;
@@ -15,67 +13,59 @@ var HTMLtime = new Date();
 
 var heliumHTML = fs.readFile('./public/helium.html', function(err, data) {
   heliumHTMLString = data.toString();
-  console.log("\n\n" + heliumHTMLString + "File Opened" + data);
 });
 
 var hydrogenHTML = fs.readFile('./public/hydrogen.html', function(err, data) {
   hydrogenHTMLString = data.toString();
-  console.log("\n\n" + hydrogenHTMLString + "File Opened" + data);
 });
 
 var indexHTML = fs.readFile('./public/index.html', function(err, data) {
   indexHTMLString = data.toString();
-  console.log("\n\n" + indexHTMLString + "File Opened" + data);
 });
 
 var server = net.createServer(function (socket) {
-  //socket.end('goodbye\n');
+  var response = "";
 
   socket.on('data', function(data) {
     dataInput = data.toString();
     console.log(dataInput);
 
     var splitData = dataInput.split('\n');
-    console.log(splitData);
 
-    console.log(splitData[0]);
+    var splitGet = splitData[0].split(' ');
 
-    if(splitData[0].includes('GET')) {
-      var removeGet = dataInput.indexOf('/');
-      console.log(removeGet);
-      var methodLength = dataInput.indexOf('\n');
-      var method = dataInput.slice(6, methodLength);
+    var method = splitGet[0];
+    var resource = splitGet[1];
+    var HTTPVersion = splitGet[2];
 
-      console.log(method);
-      response += method + "\n";
+    if(method === 'GET') {
 
       for (var i = 0; i < splitData.length; i++){
         if(splitData[i].includes('Host')){
           console.log("*This string includes Host");
         }
         if(splitData[i].includes('Date')){
-          console.log('*Date: ' + HTMLtime.toUTCString());
-          response += "*Date: " + HTMLtime.toUTCString() + "\n";
+          response += "Date: " + HTMLtime.toUTCString() + "\n";
         }
         if(splitData[i].includes('Connection: keep-alive')){
-          console.log("*Connection: keep-alive");
-          response += "*Connection: keep-alive\n";
+          response += "Connection: keep-alive\n";
         }
       }
 
-      if(splitData[0].includes('helium.html')){
-        console.log("*" + heliumHTMLString);
+      if(resource.includes('helium.html')){
         response += "\n" + heliumHTMLString;
       }
 
-      else if(splitData[0].includes('hydrogen.html')){
-        console.log("*" + hydrogenHTMLString);
+      if(resource.includes('hydrogen.html')){
         response += "\n" + hydrogenHTMLString;
       }
 
-      else if(splitData[0].includes('index.html')){
-        console.log("*" + indexHTMLString);
+      if(resource.includes('/index.html')){
         response += "\n" + indexHTMLString;
+      }
+
+      else{
+
       }
 
     }
@@ -92,3 +82,17 @@ server.on('error', function (err) {
   console.log(err);
 });
 
+//console.log("\n\n" + heliumHTMLString + "File Opened" + data);
+//console.log("\n\n" + hydrogenHTMLString + "File Opened" + data);
+//console.log("\n\n" + indexHTMLString + "File Opened" + data);
+//console.log("* Line 39 *" + splitData);
+//console.log("* Line 41 *" + splitData[0]);
+//console.log("*Get has been split \n" + splitGet);
+//console.log("This is a GET method");
+//console.log('*Date: ' + HTMLtime.toUTCString());
+//console.log("*Connection: keep-alive");
+//console.log("*" + heliumHTMLString);
+//console.log("*" + hydrogenHTMLString);
+//console.log("*" + indexHTMLString);
+
+//socket.end('goodbye\n');
